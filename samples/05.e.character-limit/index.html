@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>Web Chat: Character Limit</title>
+    <!--
+      For demonstration purposes, we are using the development branch of Web Chat at "/master/webchat.js".
+      When you are using Web Chat for production, you should use the latest stable release at "/latest/webchat.js",
+      or lock down on a specific version with the following format: "/4.1.0/webchat.js".
+    -->
+    <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
+    <style>
+      html, body { height: 100% }
+      body { margin: 0 }
+
+      #webchat,
+      #webchat > * {
+        display: flex;
+        flex: 1;
+      }
+
+      div.webchat-container {
+        height: 100%;
+        min-height: 100%;
+
+        display: flex;
+        flex-direction: column;
+      }
+
+      div.character-counter {
+        padding-right: 10px; 
+        margin-bottom: 20px;
+
+        color: #807f7f;
+        text-align: right;
+        font-family: "Calibri", "Helvetica Neue", "Arial", "sans-serif";
+      }
+    </style>
+  </head>
+  <body>
+    <div class="webchat-container">
+      <div id="webchat" role="main"></div>
+      <div class="character-counter">
+        Characters Remaining: <b><span id="counter" class="counter"></span></b>
+      </div>
+    </div>
+
+    <script>
+      (async function () {
+        // In this demo, we are using Direct Line token from MockBot.
+        // To talk to your bot, you should use the token exchanged using your Direct Line secret.
+        // You should never put the Direct Line secret in the browser or client app.
+        // https://docs.microsoft.com/en-us/azure/bot-service/rest-api/bot-framework-rest-direct-line-3-0-authentication
+        const res = await fetch('https://webchat-mockbot.azurewebsites.net/directline/token', { method: 'POST' });
+        const { token } = await res.json();
+
+        window.WebChat.renderWebChat({
+          directLine: window.WebChat.createDirectLine({ token }),
+        }, document.getElementById('webchat'));
+        
+        const MAX_LENGTH = 25;
+
+        // Initilize the character counter to MAX_LENGTH.
+        document.getElementById("counter").textContent = MAX_LENGTH;
+
+        // Set the max length attribute of the text input field in WebChat to MAX_LENGTH.
+        document.querySelector('input[aria-label="Type your message"]').maxLength = MAX_LENGTH;
+
+        // Add keyup listener to the text input field in Webchat
+        document.querySelector('input[aria-label="Type your message"]').addEventListener('keyup', (event) => {
+            const characterCount = event.target.value.length;
+            document.getElementById("counter").textContent = MAX_LENGTH - characterCount;
+        });
+
+        document.querySelector('#webchat > *').focus();
+      })().catch(err => console.error(err));
+    </script>
+  </body>
+</html>
