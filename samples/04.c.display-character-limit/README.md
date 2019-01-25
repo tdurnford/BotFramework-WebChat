@@ -5,7 +5,7 @@ A simple web page that includes a maximized Web Chat with a character limit for 
 
 # How to run
 - Fork this repository
-- Navigate to `/Your-Local-WebChat/samples/________________` in command line
+- Navigate to `/Your-Local-WebChat/samples/04.c.display-character-limit/` in command line
 - Run `npx serve`
 - Browse to [http://localhost:5000/](http://localhost:5000/)
 
@@ -19,7 +19,7 @@ A simple web page that includes a maximized Web Chat with a character limit for 
 ## Getting started
 
 ### Goals of this bot
- This sample will show you how to add a character limit to WebChat and a counter to a simple webpage.
+This sample will show you how to add a character limit to WebChat and a counter to a simple webpage.
 
 This sample starts with the [full-bundle CDN sample](./../01.a.getting-started-full-bundle/README.md) as the base template.
 
@@ -57,7 +57,7 @@ Now, we need to initilize the counter's text value to the desired MAX_LENGTH for
  …
 ```
 
-We placed the WebChat component and the counter inside of a div container so we could place the
+We put WebChat and the counter inside of a div container so we could place the counter below the WebChat component and flex the component to fill the rest of the screen.
 
 ```diff
 ...
@@ -105,11 +105,6 @@ Here is the finished `index.html`:
 <html lang="en-US">
   <head>
     <title>Web Chat: Character Limit</title>
-    <!--
-      For demonstration purposes, we are using the development branch of Web Chat at "/master/webchat.js".
-      When you are using Web Chat for production, you should use the latest stable release at "/latest/webchat.js",
-      or lock down on a specific version with the following format: "/4.1.0/webchat.js".
-    -->
     <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
     <style>
       html, body { height: 100% }
@@ -137,7 +132,7 @@ Here is the finished `index.html`:
 +
 +        color: #807f7f;
 +        text-align: right;
-+        font-family: "Calibri", "Helvetica Neue", "Arial", "sans-serif";
++        font-family: Calibri, "Helvetica Neue", Arial, sans-serif;
 +      }
     </style>
   </head>
@@ -152,10 +147,6 @@ Here is the finished `index.html`:
 
     <script>
       (async function () {
-        // In this demo, we are using Direct Line token from MockBot.
-        // To talk to your bot, you should use the token exchanged using your Direct Line secret.
-        // You should never put the Direct Line secret in the browser or client app.
-        // https://docs.microsoft.com/en-us/azure/bot-service/rest-api/bot-framework-rest-direct-line-3-0-authentication
         const res = await fetch('https://webchat-mockbot.azurewebsites.net/directline/token', { method: 'POST' });
         const { token } = await res.json();
 
