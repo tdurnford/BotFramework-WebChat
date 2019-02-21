@@ -42,9 +42,7 @@ Expand your middleware method to filter the activities you want to listen for (i
 const store = window.WebChat.createStore(
     {},
     ({ dispatch }) => next => action => {
-+        if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
-+            // ...
-+        } else if (action.type === 'WEB_CHAT/SEND_MESSAGE') {
++        if (action.type === 'WEB_CHAT/SEND_MESSAGE') {
 +            timer.start();
 +        }
         return next(action);
@@ -103,13 +101,7 @@ Here is the finished `index.html`:
 <!DOCTYPE html>
 <html lang="en-US">
   <head>
--    <title>Web Chat: Full-featured bundle</title>
-+    <title>Web Chat: Clear chat history</title>
-    <!--
-      For demonstration purposes, we are using the development branch of Web Chat at "/master/webchat.js".
-      When you are using Web Chat for production, you should use the latest stable release at "/latest/webchat.js",
-      or lock down on a specific version with the following format: "/4.1.0/webchat.js".
-    -->
+    <title>Web Chat: Clear chat history</title>
     <script src="https://cdn.botframework.com/botframework-webchat/master/webchat.js"></script>
     <style>
         html, body { height: 100% }
@@ -144,20 +136,10 @@ Here is the finished `index.html`:
     <script>
 
       (async function () {
-        // In this demo, we are using Direct Line token from MockBot.
-        // To talk to your bot, you should use the token exchanged using your Direct Line secret.
-        // You should never put the Direct Line secret in the browser or client app.
-        // https://docs.microsoft.com/en-us/azure/bot-service/rest-api/bot-framework-rest-direct-line-3-0-authentication
-
-+       // Session length in seconds
 +       const DEFAULT_TIME_INTERVAL = 15;
 +
 +       class Timer {
-+           /**
-+           * Constructor
-+           * @param {seconds} integer
-+           * @param {onStart} function
-+           */
++
 +           constructor(seconds=DEFAULT_TIME_INTERVAL) {
 +               this.seconds = seconds;
 +               
@@ -224,7 +206,6 @@ Here is the finished `index.html`:
 +       async function deleteConversation() {
 +           const { activities } = store.getState();
 +
-+           // Delete Activities 
 +           activities.forEach( ({ id }) => {
 +               store.dispatch({
 +                   type: 'DIRECT_LINE/DELETE_ACTIVITY',
@@ -234,12 +215,10 @@ Here is the finished `index.html`:
 +               });
 +           });
 +
-+           // Disconnect DirectLine
 +           store.dispatch({
 +               type: 'DIRECT_LINE/DISCONNECT'
 +           });
 +
-+           // Connect to a new DirectLine conversation
 +           const res = await fetch('https://thdurn-all-channels-directline-token.azurewebsites.net/directline/token', { +method: 'POST' });
 +           const { token } = await res.json();
 +
@@ -253,11 +232,12 @@ Here is the finished `index.html`:
        const res = await fetch('https://thdurn-all-channels-directline-token.azurewebsites.net/directline/token', { method: 'POST' });
        const { token } = await res.json();
        
-+      // We are adding a new middleware to customize the behavior of WEB_CHAT/SEND_MESSAGE.
 +      const store = window.WebChat.createStore(
 +          {},
 +          ({ dispatch }) => next => action => {
-+              if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
++             if (action.type === 'WEB_CHAT/SEND_MESSAGE') {
++                  timer.start();
++              } else if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
 +                  dispatch({
 +                      type: 'WEB_CHAT/SEND_EVENT',
 +                      payload: {
@@ -265,9 +245,7 @@ Here is the finished `index.html`:
 +                          value: { language: window.navigator.language }
 +                      }
 +                  });
-+              } else if (action.type === 'WEB_CHAT/SEND_MESSAGE') {
-+                  timer.start();
-+              }
++              } 
 +              return next(action);
 +          }
 +      );
@@ -283,7 +261,6 @@ Here is the finished `index.html`:
     </script>
   </body>
 </html>
-
 ```
 
 # Further reading
