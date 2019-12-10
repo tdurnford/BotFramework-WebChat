@@ -156,9 +156,9 @@ const WebChatCarouselFilmStrip = ({
         </ul>
         <div className={classNames({ webchat__carousel__item_indented: indented })}>
           {state === SENDING || state === SEND_FAILED ? (
-            <SendStatus activity={activity} />
+            <SendStatus activity={activity} className="timestamp" />
           ) : (
-            <Timestamp activity={activity} className={timestampClassName} />
+            <Timestamp activity={activity} aria-hidden={true} className={classNames('timestamp', timestampClassName)} />
           )}
         </div>
       </div>
